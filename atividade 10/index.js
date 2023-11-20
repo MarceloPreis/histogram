@@ -1,67 +1,14 @@
 const fs = require('fs');
 const ppm = require('ppm');
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-const collect = require('collect.js');
-
-function pgmToCsv(filepath, output) {
-    const file = readPgm(filepath)
-    const data = file.data.map(pixel => { return { pixel: parseInt(pixel) } })
-
-    const csvWriter = createCsvWriter({
-        path: output,
-        header: [
-            { id: 'pixel', title: 'PIXEL' }
-        ]
-    });
-
-    csvWriter.writeRecords(data)
-        .then(() => {
-            console.log('Arquivo csv escrito com sucesso!');
-        });
-}
-
-function ppmToCsv(filepath, output) {
-    const stream = fs.createReadStream(filepath);
-
-    ppm.parse(stream, function (err, pixels) {
-        if (err) {
-            console.error("Erro ao ler o arquivo .ppm: ", err);
-            return;
-        }
-
-        const data = pixels[0].map((pixel, index) => {
-
-            return {
-                red: pixel[0],
-                green: pixel[1],
-                blue: pixel[2]
-            };
-        });
-
-        const csvWriter = createCsvWriter({
-            path: output,
-            header: [
-                { id: 'red', title: 'RED' },
-                { id: 'green', title: 'GREEN' },
-                { id: 'blue', title: 'BLUE' }
-            ]
-        });
-
-        csvWriter.writeRecords(data)
-            .then(() => {
-                console.log('Arquivo csv escrito com sucesso!');
-            });
-    });
-}
 
 function getMinMax(array) {
     let max = array[0]
     let min = array[0]
 
     array.forEach((element, i) => {
-        if (element > max) 
+        if (element > max)
             max = element
-        
+
         if (element < min)
             min = element
     });
@@ -101,7 +48,7 @@ function writePgm(filepath, file) {
     for (let i = 0; i < file.height; i++) {
         for (let j = 0; j < file.width; j++) {
             pgm += `${file.data[counter]} `;
-            counter ++
+            counter++
         }
         pgm += '\n';
     }
@@ -122,11 +69,7 @@ function writePpm(filepath, file) {
     fs.writeFileSync(filepath, ppm)
 }
 
-// Atividade 10) --------------------------------
-pgmToCsv('./images/EntradaEscalaCinza4.pgm', './csv/escalaDeCinza.csv')
-ppmToCsv('./images/EntradaRGB.ppm', './csv/escalaRGB.csv')
 
-// Atividade 11) --------------------------------
 // pgm
 const pgm = readPgm('./images/EntradaEscalaCinza4.pgm')
 pgm.data = highlight(pgm.data)
@@ -150,5 +93,3 @@ ppm.parse(stream, function (err, pixels) {
 
     writePpm('./highlighted_images/EntradaRBG.ppm', { type: 'P3', height: height, width: width, data: pixels })
 })
-
-
